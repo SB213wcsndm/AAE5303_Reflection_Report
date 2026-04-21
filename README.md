@@ -46,7 +46,7 @@ My reasoning process followed these steps:
 
 Initial Diagnosis: I first asked Google Ai to explain the CXX error. While it gave me general information about compiler versions, it didn't solve the specific ARM-architecture conflict.
 
-Research & Pivot: I realized that "Googling for solutions" was only getting me part of the way. I had to learn what CXX is (since I didn't kno w it stands for C++ in the first place). I spent days on Stack Overflow and GitHub issues (specifically the ORB-SLAM3 and ROS Noetic issues for ARM64).
+Research & Pivot: I realized that "Googling for solutions" was only getting me part of the way. I had to learn what CXX is (since I didn't know it stands for C++ in the first place). I spent days on Stack Overflow and GitHub issues (specifically the ORB-SLAM3 and ROS Noetic issues for ARM64).
 
 Manual Integration: I found that certain third-party libraries (like Pangolin or OpenCV) needed to be built from source with specific flags to work within a UTM virtual machine. The AI actually failed here because it kept suggesting standard apt-get commands that were incompatible with my specific virtualization layer.
 
