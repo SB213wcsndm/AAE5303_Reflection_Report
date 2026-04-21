@@ -8,8 +8,10 @@
 
 **Date:** April 21, 2026
 
-##Section 1: AI Usage Experience
+## Section 1: AI Usage Experience
+
 During the AAE5303 project, my interaction with AI tools like Gemini and Google AI was shaped significantly by my unique technical setup. Unlike the majority of students who utilized the provided Docker containers on Windows, I insisted on running the Visual SLAM pipeline natively (via UTM VM) on a MacBook Pro with Apple Silicon (M1 Pro). This decision rendered the "Cursor" tool less useful for direct environment linking, so I relied on Gemini as a high-level research and debugging partner.
+
 I used AI primarily for three tasks: environment configuration, parameter estimation, and presentation structuring. I used these tools roughly 3–4 times a week during the peak development phases of ORB-SLAM3. The most useful feature was the chat-based troubleshooting for Linux-specific compilation errors and the ability to process external documentation links (like the HKU MaRS drone CAD files) to help estimate extrinsic parameters for the IMU. Because I was working in an ARM-based virtualized environment, I often had to "translate" AI suggestions meant for standard x86 systems into solutions compatible with my Ubuntu 20.04 VM on UTM.
 
 ---
