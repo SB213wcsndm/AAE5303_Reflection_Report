@@ -1,72 +1,55 @@
 # AAE5303_Reflection_Report
 
-**Student Name:** MAN Chi Lok Louie
+**Student Name:** ZHANG Yuhao
 
-**Student ID:** 25001004G
+**Student ID:** 25044023G
 
 **Group Number:** 我們組 (WMZ)
 
-**Date:** April 21, 2026
+**Date:** April 24, 2026
 
 ## Section 1: AI Usage Experience
 
-During the AAE5303 project, my interaction with AI tools like Gemini and Google AI was shaped significantly by my unique technical setup. Unlike the other students who utilized the provided Docker containers on Windows, I insisted on running the Visual SLAM pipeline natively (via UTM VM) on a MacBook Pro with Apple Silicon (M1 Pro). This decision rendered the "Cursor" tool less useful for direct environment linking, so I relied on Google AI and Gemini as a high-level research and debugging partner.
-
-I used AI primarily for three tasks: environment configuration, parameter estimation, and presentation structuring. I used these tools roughly 3–4 times a week during the whole project. The most useful feature was the chat-based troubleshooting for Linux-specific compilation errors and the ability to process external documentation links (like the HKU MaRS drone CAD files) to help estimate extrinsic parameters for the IMU. Because I was working in an ARM-based virtualized environment, I always had to include the phrase "ARM Ubuntu" into searching on solutions that are compatible with my Ubuntu 20.04 VM on UTM.
+In the two assignments and the 3D scene reconstruction project, I mainly used Cursor as my development tool.
+First, for Assignment 1, I updated the Python environment following Cursor’s suggestions. I previously had Ubuntu 20.0.4 and ROS1 Noetic installed, which came with Python 3.8.10. Therefore, I needed to upgrade Python to version 3.10.14, and I followed the step-by-step guidance provided by Cursor throughout the process.
+In Assignment 2, I also relied on Cursor to fix the docker run command, enabling me to launch Xlaunch inside a Docker container and successfully complete the task.
+For the final 3D scene reconstruction project, Cursor assisted me in tuning the parameters to best match my device configuration.
 
 ---
 
 ## Section 2: Understanding AI Limitations
 
-A critical instance where AI produced misleading results occurred when I attempted to refine the IMU extrinsic parameters to reduce trajectory drifting. The ORB-SLAM3 output was drifting vigorously to the left and upward. I prompted Gemini to suggest a refined Tbc (Body-to-Camera) matrix based on the AMtown02 drone's CAD layout.
-
-Gemini provided a revised matrix with modified rotation values, claiming it would compensate for the perceived misalignment. However, when applied, drifting still occurred. I detected this issue through immediate visual inspection of the trajectory in the ORB-SLAM3 viewer—the drone's path deviated significantly from the visual evidence in the AMtown02 video stream.
-
-The failure happened because the AI lacked the physical intuition of the specific coordinate system conventions used in the HKU MaRS dataset versus the standard OpenCV conventions expected by ORB-SLAM3. It "hallucinated" a geometric correction that looked mathematically plausible but was physically inverted. Consequently, I realized that I need to trust the hard data over the AI's "estimated" rotations.
+When using Cursor as the development tool to complete the 3D scene reconstruction project, due to the limitations of my device, the AI suggested reducing the image matching parameters to improve the running speed under CPU computation. However, after following this suggestion, the matching results between images became too sparse and weak. Consequently, the subsequent mapper command failed to find a valid initial image pair to start the reconstruction process, making it impossible to proceed with the subsequent reconstruction workflow.
+Therefore, it was necessary to adjust the inter-image matching parameters to balance computational efficiency and matching quality — ensuring both acceptable running speed and sufficient feature strength for reliable image matching. By combining feedback from Cursor AI, I increased the overlap parameter and the feature matching quantity parameter, then re-ran the reconstruction pipeline, which successfully resolved the issue.
 
 ---
 
 ## Section 3: Engineering Validation
-To ensure the reliability of my Visual SLAM output, I employed a benchmark-driven validation strategy. Since my goal was to achieve at least 90 marks on the Leaderboard (eventually reaching 92.6), I could not rely on AI-suggested "rules of thumb" for parameter tuning.
 
-I validated my configurations through three main methods:
-
-Benchmark Iteration: I systematically increased the number of ORB features from the default to a "crazily high" 15,000. I validated this by running the evaluation script evaluate_vo_accuracy.py after each change to ensure the RMSE (Root Mean Square Error) was decreasing without causing the VM to crash due to memory overhead.
-
-Reproducibility Testing: I documented my specific steps for the ARM environment in a markdown file to ensure another user could make references to my steps. I cross-checked my output format against the standard Windows/Docker output to ensure compatibility within our team's integrated pipeline.
-
-Comparison with the images: I visually compared the generated trajectories against the AMtown02 images on ORB-SLAM3 preview to ensure that the estimation process is at least "on-track".
+During the 3D scene reconstruction project, Cursor assisted me in writing the commands for generating 3D model files. I additionally added a setting to produce intermediate output files every 10 training iterations, allowing me to evaluate the reconstruction quality more intuitively.
+The generated intermediate results clearly showed that the model after 10 training iterations suffered from severe feature loss, with obvious missing details in roads, water surfaces, flat ground and other areas. In contrast, feature missing was greatly reduced after 30 iterations.
+I then ran the Python script provided in the project demo to obtain the evaluation curve. The results indicated that the feature loss decreased by 36.7% after 30 training rounds, dropping from the initial value of 0.2798 to 0.1772. This verified that the reconstruction performance achieved a substantial improvement in this scenario.
 
 ---
 
 ## Section 4: Problem-Solving Process
-The most significant technical challenge I faced was the "CXX Error" during the compilation of ORB-SLAM3 on my Apple Silicon Mac. As a self-taught coder, I initially didn't understand that "CXX" was simply shorthand for C++. The build process kept failing with obscure compatibility messages regarding the compiler flags.
 
-My reasoning process followed these steps:
-
-Initial Diagnosis: I first asked Google Ai to explain the CXX error. While it gave me general information about compiler versions, it didn't solve the specific ARM-architecture conflict.
-
-Research & Pivot: I realized that "Googling for solutions" was only getting me part of the way. I had to learn what CXX is (since I didn't know it stands for C++ in the first place). I spent days on Stack Overflow and GitHub issues (specifically the ORB-SLAM3 and ROS Noetic issues for ARM64).
-
-Manual Integration: I found that certain third-party libraries (like Pangolin or OpenCV) needed to be built from source with specific flags to work within a UTM virtual machine. The AI actually failed here because it kept suggesting standard apt-get commands that were incompatible with my specific virtualization layer.
-
-Resolution: I manually edited the CMake files to force the correct C++ version. This taught me that self-learning and "developer instinct" are more impactful than being "spoon-fed" solutions by an AI or a pre-defined course workflow.
+During the 3D scene reconstruction project, I encountered a series of major issues that caused my computer to freeze and crash unexpectedly. The root cause was that my device is equipped with an AMD CPU rather than a CUDA-capable GPU. Directly executing the reconstruction commands led to excessively high CPU usage and eventually a system breakdown.
+By referring to the official OpenSplat open-source tutorials, I learned how to build OpenSplat for CPU-only operation. Meanwhile, I consulted Cursor and obtained optimized commands that reduced inter-image matching parameters to accelerate runtime performance on the CPU.
+Although this solution allowed me to continue the project, following the suggested parameters resulted in too few and weak feature matches between images. Consequently, the subsequent mapper module could not locate a valid initial image pair to initiate reconstruction, making further training impossible.
+I therefore needed to fine-tune the image matching parameters to strike a balance: maintaining acceptable computation speed while preserving sufficient feature robustness for reliable image registration. With guidance from Cursor, I increased the overlap threshold and the number of feature matches, then re-ran the pipeline. This adjustment successfully generated the final 3D scene reconstruction model file.
 
 ---
 
 ## Section 5: Learning Growth
 
-This course has been transformative. At the start, my confidence in setting up complex robotics environments was low. I viewed tools like Docker as a black box. By the end, I reached a high confidence level in tooling readiness.
 
-The skills that improved the most were my understanding of Linux system architecture and the mechanics of Visual SLAM. I can now independently build complex C++ projects from source, manage dependencies in a virtualized environment, and tune SLAM parameters for datasets. What felt impossible—running high-performance SLAM on a non-native, ARM-based Mac—now feels manageable. I have moved from being a "consumer" who follows instructions to an "architect" who creates custom engineering environments.
 
 ---
 
-## Section 6: Critical Reflection
+## Section 6: Learning Growth
 
-AI played a balanced role in my journey. It acted as a "force multiplier" for documentation and drafting—for example, it helped me generate the initial structure for my group presentation slides, allowing me to focus on the technical content. However, I learned not to trust it for 100% of my problems.
 
-I relied on AI appropriately for "boilerplate" tasks and definitions, but I learned that relying on it for high-stakes technical decisions (like IMU calibration) can be unreliable. If I were to do this project again, I would spend more time learning the fundamental Linux system operations earlier on, rather than initially "Googling for solutions" as a first resort. I’ve realized that the most satisfying parts of the project were the ones I solved myself through trial and error, such as the CXX error (yeah, C++...) resolution.
 
 ---
 
