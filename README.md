@@ -52,7 +52,9 @@ I therefore needed to fine-tune the image matching parameters to strike a balanc
 
 ## Section 5: Learning Growth
 
+Before taking this course, I had already learned how to use ROS1 Noetic, but I had no prior experience with Docker or Cursor for development. During Assignment 1, I started using Cursor to help troubleshoot and resolve technical errors. For Assignment 2, I pulled Docker images and configured proper docker run commands with Cursor’s guidance to complete the project tasks.
 
+My most significant progress lies in my in-depth understanding of the entire 3D scene reconstruction workflow. I have gained a clear grasp of how each step connects as a complete pipeline, including building the OpenSplat development environment, importing training datasets, feature extraction, feature matching, pose generation, and 3D scene reconstruction. Furthermore, I am now able to comprehend the specific functions and implications of relevant parameters and commands throughout the process, and adjust them appropriately according to actual project requirements.
 
 ---
 
