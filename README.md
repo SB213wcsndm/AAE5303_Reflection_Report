@@ -58,7 +58,7 @@ My most significant progress lies in my in-depth understanding of the entire 3D 
 
 ---
 
-## Section 6: Learning Growth
+## Section 6: Critical Reflection
 
 The application of artificial intelligence has greatly facilitated my study. Cursor is highly effective in helping me troubleshoot errors and provide guidance for the next step, enabling me to fully understand the causes and outcomes of each operation. It has significantly assisted me in completing all assignments and projects.
 
