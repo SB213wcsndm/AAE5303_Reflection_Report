@@ -60,32 +60,52 @@ My most significant progress lies in my in-depth understanding of the entire 3D 
 
 ## Section 6: Learning Growth
 
+The application of artificial intelligence has greatly facilitated my study. Cursor is highly effective in helping me troubleshoot errors and provide guidance for the next step, enabling me to fully understand the causes and outcomes of each operation. It has significantly assisted me in completing all assignments and projects.
 
+On the other hand, I found that Cursor’s AI Agent will modify my files automatically based on its generated outputs, including files in the workspace. For instance, during the training initialization phase of the 3D scene reconstruction project, the Agent arbitrarily altered the required pose .bin file in the workspace. This mismatch between the actual images and the modified pose .bin file prevented the training process from starting successfully. This abnormal issue was only resolved after I deleted and reconstructed the relevant files and datasets.
+
+If I were to redo this project, I would first figure out the exact meaning of each operational step before allowing AI to intervene in specific tasks. Meanwhile, I would isolate workspace files in advance, so that I can collaborate with AI to troubleshoot errors encountered in the project more reliably.
 
 ---
 
 ## Section 7: Evidence
 
-### 7.1 Code Snippets
+### 7.1 Comand Snippets
 
-AI-suggested IMU refinement (Misleading):
+AI-suggested comand and their meaning:
 
-Gemini suggested this to "fix" the leftward drift
+Cursor suggested this to reduced inter-image matching parameters to accelerate runtime performance on the CPU.
 ```bash
-Tbc: !!opencv-matrix
-   data: [ -0.008726, -0.999924,  0.008727, -0.00674,
-            0.008727, -0.008726, -0.999924, -0.02840,
-            0.999924,  0.008650,  0.008803, -0.09965,
-            0.0,       0.0,       0.0,       1.0]
+Feature Extraction:
+colmap feature_extractor \             --Invoke the feature_extractor command of COLMAP. 
+  --database_path database.db \
+  --image_path images \
+  --ImageReader.single_camera 1 \              --The same camera intrinsic model 
+  --SiftExtraction.use_gpu 0 \                 --Disable GPU and use CPU only
+  --SiftExtraction.max_image_size 1000 \       --Limit the long side of images to a maximum of 1000 pixels
+  --SiftExtraction.max_num_features 1024 \     --Retain a maximum of 1024 feature points per image
+  --SiftExtraction.num_threads 2               --Only use 2 CPU threads
+
+Feature Matching
+colmap sequential_matcher \             --Invoke the sequential matching module of COLMAP，instead of exhaustive_matcher for a rapid result 
+  --database_path database.db \
+  --SiftMatching.use_gpu 0 \                --Disable GPU and use CPU only
+  --SequentialMatching.overlap 15 \         --Up to approximately 15 preceding and subsequent frames
+  --SiftMatching.max_num_matches 16384 \    --A maximum of 16384 matching points will be retained
+  --SiftMatching.num_threads 2              --Only use 2 CPU threads
+
+
+
 ```
-Note: This still induced drift because the rotation matrix was not aligned with the actual drone specification.
 
 ### 7.2 Prompt Examples
 
-Prompt: "Create a Google Slides for my presentation of 5-6 minutes regarding the refinements of visual odometry... and point out I used Apple Silicon via UTM rather than Docker."
+Prompt:  error bash
 
-Result: Helpful for structure, but failed to include the specific technical figures (intrinsic/extrinsic parameters) required for a professional engineering presentation.
+Result: 
+This indicates that the feature matches among the 20 images are too few and too weak. The mapper cannot find a valid initial image pair to start reconstruction, hence it keeps reporting the error: No good initial image pair found.
+Brief Causes
+1. You are using sequential_matcher with overlap=3, which is still too strict for some UAV continuous image sequences.
+2. The 20 images are selected simply by filename order instead of chronological continuity, resulting in insufficient overlap between adjacent frames.
+3. The feature configuration is relatively conservative (with max_image_size set to 1000 or 1024). Matching becomes even more difficult in weakly textured scenes.
 
-### 7.3 Accuracy Evidence
-
-Leaderboard Achievement: Successfully reached a score of 92.6 by scaling ORBextractor.nFeatures to 15,000, validating that a high-density feature approach can compensate for certain inaccuracy in SLAM.
